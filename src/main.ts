@@ -1,6 +1,20 @@
-import exampleIconUrl from "./noun-paperclip-7598668-00449F.png";
+import buttonIcon from "./bubblewrap.png";
 import "./style.css";
 
-document.body.innerHTML = `
-  <p>Example image asset: <img src="${exampleIconUrl}" class="icon" /></p>
-`;
+document.body.innerHTML = ``;
+
+const imageButton = document.createElement("button");
+imageButton.style.border = "none";
+imageButton.style.padding = "0";
+imageButton.style.background = "transparent";
+imageButton.style.cursor = "pointer";
+
+const buttonImage = document.createElement("img");
+buttonImage.src = buttonIcon;
+buttonImage.style.width = "600px";
+buttonImage.style.height = "auto";
+buttonImage.classList.add("icon");
+
+imageButton.appendChild(buttonImage);
+
+document.body.appendChild(imageButton);
