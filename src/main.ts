@@ -4,6 +4,12 @@ import "./style.css";
 // Initialize a counter variable to hold the state
 let counter: number = 0;
 
+// helper function
+const pop = () => {
+  counter++;
+  counterDisplay.textContent = `${counter} Pops`;
+};
+
 document.body.innerHTML = ``;
 
 // Create the button element
@@ -40,6 +46,9 @@ imageButton.addEventListener("click", () => {
   // Update the display text with the new counter value
   counterDisplay.textContent = `${counter} Pops`;
 });
+
+// auto-popper
+setInterval(pop, 1000); // Calls pop() every 1000ms (1 second)
 
 // Append the elements to the page
 document.body.appendChild(imageButton);
