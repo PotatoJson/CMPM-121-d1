@@ -1,107 +1,147 @@
 import buttonIcon from "./bubblewrap.png";
 import "./style.css";
 
-// state
+// --- Data Structure for Upgrades ---
+// Defines all available upgrades in a scalable way.
+const upgrades = [
+  {
+    name: "Auto-Popper A",
+    cost: 10,
+    growth: 0.1, // Pops per second
+    count: 0,
+    element: null as HTMLButtonElement | null, // To hold the button element
+  },
+  {
+    name: "Auto-Popper B",
+    cost: 100,
+    growth: 2.0,
+    count: 0,
+    element: null as HTMLButtonElement | null,
+  },
+  {
+    name: "Auto-Popper C",
+    cost: 1000,
+    growth: 50.0,
+    count: 0,
+    element: null as HTMLButtonElement | null,
+  },
+];
+
+// --- State Variables ---
 let counter: number = 0;
+let growthRate: number = 0; // Total pops per second from all upgrades
 
-// Initialize the growth rate to 0. The counter will not grow automatically at the start.
-let growthRate: number = 0; // Represents pops per second
-const upgradeCost: number = 10;
+// --- UI Elements ---
+document.body.innerHTML = ``; // Clear the page
 
-document.body.innerHTML = ``;
-
-// Create the button element
+// Main "Pop" Button
 const imageButton = document.createElement("button");
-
 imageButton.style.border = "none";
 imageButton.style.padding = "0";
 imageButton.style.background = "transparent";
 imageButton.style.cursor = "pointer";
-
-// Create the image element
 const buttonImage = document.createElement("img");
-
 buttonImage.src = buttonIcon;
 buttonImage.style.width = "600px";
 buttonImage.style.height = "auto";
 buttonImage.classList.add("icon");
-
-// Place the image inside the button
 imageButton.appendChild(buttonImage);
 
-// Add the button (with the image inside it) to the page
-document.body.appendChild(imageButton);
-
-// Counter display element
+// Main Counter Display
 const counterDisplay = document.createElement("div");
 counterDisplay.id = "counter-display";
-counterDisplay.textContent = `${Math.floor(counter)} Pops`; // Initial display
 
-// button for purchasing the upgrade
-const upgradeButton = document.createElement("button");
-upgradeButton.id = "upgrade-button";
-upgradeButton.textContent = `Buy Auto-Popper (Cost: ${upgradeCost} Pops)`;
+// Status Displays
+const statusContainer = document.createElement("div");
+statusContainer.id = "status-container";
+const growthRateDisplay = document.createElement("div");
+growthRateDisplay.id = "growth-rate-display";
+const upgradesCountDisplay = document.createElement("div");
+upgradesCountDisplay.id = "upgrades-count-display";
+statusContainer.appendChild(growthRateDisplay);
+statusContainer.appendChild(upgradesCountDisplay);
 
-const updateUI = () => {
-  // Update the text content of the counter display with the whole number
-  counterDisplay.textContent = `${Math.floor(counter)} Pops`;
+// Upgrade Buttons Container
+const upgradesContainer = document.createElement("div");
+upgradesContainer.id = "upgrades-container";
 
-  // Disable the upgrade button if the player's counter is less than the cost.
-  // Enable it otherwise, allowing a purchase.
-  upgradeButton.disabled = counter < upgradeCost;
+// --- Game Logic and UI Update Functions ---
+
+// Recalculates the total growth rate based on the count of each upgrade.
+const recalculateGrowthRate = () => {
+  growthRate = upgrades.reduce((total, upgrade) => {
+    return total + upgrade.count * upgrade.growth;
+  }, 0);
 };
 
-// event listener to the button
+// Updates all UI elements to reflect the current game state.
+
+const updateUI = () => {
+  counterDisplay.textContent = `${Math.floor(counter)} Pops`;
+  growthRateDisplay.textContent = `Growth: ${growthRate.toFixed(1)} Pops/sec`;
+  upgradesCountDisplay.innerHTML = upgrades
+    .map((u) => `<div>${u.name}: ${u.count}</div>`)
+    .join("");
+
+  upgrades.forEach((upgrade) => {
+    if (upgrade.element) {
+      upgrade.element.disabled = counter < upgrade.cost;
+    }
+  });
+};
+
+// --- Create Upgrade Buttons and Event Listeners ---
+// This block dynamically creates a button for each item in the upgrades array.
+upgrades.forEach((upgrade) => {
+  const button = document.createElement("button");
+  button.textContent =
+    `${upgrade.name} (Cost: ${upgrade.cost}, +${upgrade.growth}/s)`;
+
+  // Assign the purchase logic to the button's click event
+  button.onclick = () => {
+    if (counter >= upgrade.cost) {
+      counter -= upgrade.cost;
+      upgrade.count++;
+      recalculateGrowthRate();
+      updateUI();
+    }
+  };
+
+  upgrade.element = button; // Store the element for later access (to disable/enable it)
+  upgradesContainer.appendChild(button);
+});
+
+// Event listener for the main pop button
 imageButton.addEventListener("click", () => {
-  counter++; // Increment the counter
-
-  updateUI(); // Update the display text with the new counter value
+  counter++;
+  updateUI();
 });
 
-// Event listener for the new upgrade button
-upgradeButton.addEventListener("click", () => {
-  // Check if the player can afford the upgrade
-  if (counter >= upgradeCost) {
-    // Deduct the cost from the counter
-    counter -= upgradeCost;
-    // Increment the growth rate by 1 pop per second
-    growthRate++;
-    // Update the UI immediately to reflect the purchase
-    updateUI();
-  }
-});
-
+// --- Animation Loop ---
 let lastTime = 0;
 
 function gameLoop(timestamp: number) {
-  // Skip the first frame's calculation to avoid a large initial jump
   if (lastTime !== 0) {
-    // Calculate the time elapsed since the last frame
-    const deltaTime = timestamp - lastTime; // Time in milliseconds
-
-    // Determine the increment amount
-    const increment = (growthRate * deltaTime) / 1000; // growing 1 per second
+    const deltaTime = timestamp - lastTime;
+    const increment = (growthRate * deltaTime) / 1000;
 
     if (increment > 0) {
       counter += increment;
-      updateUI();
     }
-
-    // Update the display on the screen
+    // Update the UI on every frame to keep the counter and button states fresh.
     updateUI();
   }
-
-  //Store the current time for the next frame's calculation
   lastTime = timestamp;
-
-  //Request the next animation frame to continue the loop
   requestAnimationFrame(gameLoop);
 }
 
-// Start the animation loop
-requestAnimationFrame(gameLoop);
-
-// Append the elements to the page
+// --- Initialization ---
 document.body.appendChild(imageButton);
 document.body.appendChild(counterDisplay);
-document.body.appendChild(upgradeButton);
+document.body.appendChild(statusContainer);
+document.body.appendChild(upgradesContainer);
+
+// Set the initial UI state and start the game
+recalculateGrowthRate();
+updateUI();
+requestAnimationFrame(gameLoop);
