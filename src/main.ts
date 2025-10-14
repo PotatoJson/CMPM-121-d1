@@ -5,21 +5,21 @@ import "./style.css";
 // Defines all available upgrades in a scalable way.
 const upgrades = [
   {
-    name: "Auto-Popper A",
+    name: "Automated Pin",
     baseCost: 10,
     growth: 0.1, // Pops per second
     count: 0,
-    element: null as HTMLButtonElement | null, // To hold the button element
+    element: null as HTMLButtonElement | null,
   },
   {
-    name: "Auto-Popper B",
+    name: "Factory Roller",
     baseCost: 100,
     growth: 2.0,
     count: 0,
     element: null as HTMLButtonElement | null,
   },
   {
-    name: "Auto-Popper C",
+    name: "Bubble Wrap Steamroller",
     baseCost: 1000,
     growth: 50.0,
     count: 0,
@@ -83,7 +83,7 @@ const recalculateGrowthRate = () => {
 
 const updateUI = () => {
   counterDisplay.textContent = `${Math.floor(counter)} Pops`;
-  growthRateDisplay.textContent = `Growth: ${growthRate.toFixed(1)} Pops/sec`;
+  growthRateDisplay.textContent = `${growthRate.toFixed(1)} Pops/sec`;
   upgradesCountDisplay.innerHTML = upgrades
     .map((u) => `<div>${u.name}: ${u.count}</div>`)
     .join("");
