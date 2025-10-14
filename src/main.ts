@@ -6,26 +6,29 @@ import "./style.css";
 const upgrades = [
   {
     name: "Auto-Popper A",
-    cost: 10,
+    baseCost: 10,
     growth: 0.1, // Pops per second
     count: 0,
     element: null as HTMLButtonElement | null, // To hold the button element
   },
   {
     name: "Auto-Popper B",
-    cost: 100,
+    baseCost: 100,
     growth: 2.0,
     count: 0,
     element: null as HTMLButtonElement | null,
   },
   {
     name: "Auto-Popper C",
-    cost: 1000,
+    baseCost: 1000,
     growth: 50.0,
     count: 0,
     element: null as HTMLButtonElement | null,
   },
 ];
+
+// --- Type alias for clarity ---
+type Upgrade = typeof upgrades[0];
 
 // --- State Variables ---
 let counter: number = 0;
@@ -67,14 +70,16 @@ upgradesContainer.id = "upgrades-container";
 
 // --- Game Logic and UI Update Functions ---
 
-// Recalculates the total growth rate based on the count of each upgrade.
-const recalculateGrowthRate = () => {
-  growthRate = upgrades.reduce((total, upgrade) => {
-    return total + upgrade.count * upgrade.growth;
-  }, 0);
+const getUpgradeCost = (upgrade: Upgrade): number => {
+  return upgrade.baseCost * Math.pow(1.15, upgrade.count);
 };
 
-// Updates all UI elements to reflect the current game state.
+const recalculateGrowthRate = () => {
+  growthRate = upgrades.reduce(
+    (total, u) => total + u.count * u.growth,
+    0,
+  );
+};
 
 const updateUI = () => {
   counterDisplay.textContent = `${Math.floor(counter)} Pops`;
@@ -83,34 +88,35 @@ const updateUI = () => {
     .map((u) => `<div>${u.name}: ${u.count}</div>`)
     .join("");
 
+  // Update each button with the new dynamic cost
   upgrades.forEach((upgrade) => {
     if (upgrade.element) {
-      upgrade.element.disabled = counter < upgrade.cost;
+      const currentCost = getUpgradeCost(upgrade);
+      // Update button text to show the new cost, rounded up to the nearest integer
+      upgrade.element.textContent = `${upgrade.name} (Cost: ${
+        Math.ceil(currentCost)
+      }, +${upgrade.growth}/s)`;
+      // Disable the button if the player can't afford it
+      upgrade.element.disabled = counter < currentCost;
     }
   });
 };
 
 // --- Create Upgrade Buttons and Event Listeners ---
-// This block dynamically creates a button for each item in the upgrades array.
 upgrades.forEach((upgrade) => {
   const button = document.createElement("button");
-  button.textContent =
-    `${upgrade.name} (Cost: ${upgrade.cost}, +${upgrade.growth}/s)`;
-
-  // Assign the purchase logic to the button's click event
   button.onclick = () => {
-    if (counter >= upgrade.cost) {
-      counter -= upgrade.cost;
+    const cost = getUpgradeCost(upgrade);
+    if (counter >= cost) {
+      counter -= cost;
       upgrade.count++;
       recalculateGrowthRate();
-      updateUI();
+      updateUI(); // This is crucial to update the costs on all buttons
     }
   };
-
-  upgrade.element = button; // Store the element for later access (to disable/enable it)
+  upgrade.element = button;
   upgradesContainer.appendChild(button);
 });
-
 // Event listener for the main pop button
 imageButton.addEventListener("click", () => {
   counter++;
