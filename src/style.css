@@ -3,3 +3,25 @@
   vertical-align: top;
   border: 1px solid salmon;
 }
+
+#tooltip {
+  /* Positioning */
+  position: absolute; /* Allows us to position it anywhere on the page */
+  z-index: 100; /* Ensures it appears on top of other elements */
+
+  /* Hiding/Showing */
+  display: none; /* Hidden by default */
+
+  /* Appearance */
+  background-color: #222;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 250px;
+
+  /* Behavior */
+  pointer-events: none; /* Prevents the tooltip from blocking clicks on elements underneath it */
+  font-size: 0.9em;
+  line-height: 1.4;
+}

@@ -1,43 +1,71 @@
 import buttonIcon from "./bubblewrap.png";
 import "./style.css";
 
-// --- Data Structure for Upgrades ---
-// Defines all available upgrades in a scalable way.
-const upgrades = [
+// --- Data-Driven Design: Static Item Definitions ---
+// This interface defines the "blueprint" for any purchasable item.
+interface Item {
+  name: string;
+  baseCost: number; // Renamed from 'cost' to match logic
+  growth: number; // Renamed from 'rate' for consistency
+  description: string;
+}
+
+// This array holds the static, unchanging definitions of all available items.
+const availableItems: Item[] = [
   {
     name: "Automated Pin",
     baseCost: 10,
-    growth: 0.1, // Pops per second
-    count: 0,
-    element: null as HTMLButtonElement | null,
+    growth: 0.1,
+    description:
+      "A simple, yet effective, pin on a robotic arm. Pokes one bubble at a time.",
   },
   {
     name: "Factory Roller",
     baseCost: 100,
     growth: 2.0,
-    count: 0,
-    element: null as HTMLButtonElement | null,
+    description:
+      "Industrial-grade rollers that flatten entire sheets with satisfying crunches.",
   },
   {
     name: "Bubble Wrap Steamroller",
     baseCost: 1000,
     growth: 50.0,
-    count: 0,
-    element: null as HTMLButtonElement | null,
+    description:
+      "Maximum flattening power. The ground trembles with every pop.",
+  },
+  {
+    name: "Pressurized Air Cannon",
+    baseCost: 15000,
+    growth: 250.0,
+    description:
+      "Fires concentrated blasts of air, popping bubbles with shocking efficiency.",
+  },
+  {
+    name: "Acoustic Resonance Chamber",
+    baseCost: 200000,
+    growth: 1200.0,
+    description:
+      "Vibrates bubble wrap at its resonant frequency, causing a cascade of pops.",
   },
 ];
+// --- Player State ---
+// This creates the player's inventory by mapping over the static item data
+// and adding stateful properties like 'count' and the associated HTML element.
+const playerUpgrades = availableItems.map((item) => ({
+  ...item, // Copies name, baseCost, and growth
+  count: 0,
+  element: null as HTMLButtonElement | null,
+}));
 
 // --- Type alias for clarity ---
-type Upgrade = typeof upgrades[0];
+type PlayerUpgrade = typeof playerUpgrades[0];
 
 // --- State Variables ---
 let counter: number = 0;
-let growthRate: number = 0; // Total pops per second from all upgrades
+let growthRate: number = 0;
 
 // --- UI Elements ---
-document.body.innerHTML = ``; // Clear the page
-
-// Main "Pop" Button
+document.body.innerHTML = ``;
 const imageButton = document.createElement("button");
 imageButton.style.border = "none";
 imageButton.style.padding = "0";
@@ -50,11 +78,8 @@ buttonImage.style.height = "auto";
 buttonImage.classList.add("icon");
 imageButton.appendChild(buttonImage);
 
-// Main Counter Display
 const counterDisplay = document.createElement("div");
 counterDisplay.id = "counter-display";
-
-// Status Displays
 const statusContainer = document.createElement("div");
 statusContainer.id = "status-container";
 const growthRateDisplay = document.createElement("div");
@@ -64,60 +89,78 @@ upgradesCountDisplay.id = "upgrades-count-display";
 statusContainer.appendChild(growthRateDisplay);
 statusContainer.appendChild(upgradesCountDisplay);
 
-// Upgrade Buttons Container
 const upgradesContainer = document.createElement("div");
 upgradesContainer.id = "upgrades-container";
 
-// --- Game Logic and UI Update Functions ---
+// --- Create the new Tooltip Element ---
+const tooltip = document.createElement("div");
+tooltip.id = "tooltip";
+document.body.appendChild(tooltip); // Add it to the page once
 
-const getUpgradeCost = (upgrade: Upgrade): number => {
+// --- Game Logic and UI Functions ---
+
+const getUpgradeCost = (upgrade: PlayerUpgrade): number => {
   return upgrade.baseCost * Math.pow(1.15, upgrade.count);
 };
 
+// Logic now loops over the dynamic 'playerUpgrades' array
 const recalculateGrowthRate = () => {
-  growthRate = upgrades.reduce(
+  growthRate = playerUpgrades.reduce(
     (total, u) => total + u.count * u.growth,
     0,
   );
 };
 
+// Logic now loops over the dynamic 'playerUpgrades' array
 const updateUI = () => {
   counterDisplay.textContent = `${Math.floor(counter)} Pops`;
-  growthRateDisplay.textContent = `${growthRate.toFixed(1)} Pops/sec`;
-  upgradesCountDisplay.innerHTML = upgrades
+  growthRateDisplay.textContent = `Growth: ${growthRate.toFixed(1)} Pops/sec`;
+
+  upgradesCountDisplay.innerHTML = playerUpgrades
     .map((u) => `<div>${u.name}: ${u.count}</div>`)
     .join("");
 
-  // Update each button with the new dynamic cost
-  upgrades.forEach((upgrade) => {
+  playerUpgrades.forEach((upgrade) => {
     if (upgrade.element) {
       const currentCost = getUpgradeCost(upgrade);
-      // Update button text to show the new cost, rounded up to the nearest integer
       upgrade.element.textContent = `${upgrade.name} (Cost: ${
         Math.ceil(currentCost)
       }, +${upgrade.growth}/s)`;
-      // Disable the button if the player can't afford it
       upgrade.element.disabled = counter < currentCost;
     }
   });
 };
 
 // --- Create Upgrade Buttons and Event Listeners ---
-upgrades.forEach((upgrade) => {
+playerUpgrades.forEach((upgrade) => {
   const button = document.createElement("button");
+
+  button.addEventListener("mouseover", (event) => {
+    tooltip.textContent = upgrade.description;
+    tooltip.style.display = "block";
+    // Position tooltip near the mouse cursor
+    tooltip.style.left = `${event.pageX + 10}px`;
+    tooltip.style.top = `${event.pageY + 10}px`;
+  });
+
+  // Hide the tooltip when the mouse leaves
+  button.addEventListener("mouseout", () => {
+    tooltip.style.display = "none";
+  });
+
   button.onclick = () => {
     const cost = getUpgradeCost(upgrade);
     if (counter >= cost) {
       counter -= cost;
       upgrade.count++;
       recalculateGrowthRate();
-      updateUI(); // This is crucial to update the costs on all buttons
+      updateUI();
     }
   };
   upgrade.element = button;
   upgradesContainer.appendChild(button);
 });
-// Event listener for the main pop button
+
 imageButton.addEventListener("click", () => {
   counter++;
   updateUI();
@@ -125,16 +168,13 @@ imageButton.addEventListener("click", () => {
 
 // --- Animation Loop ---
 let lastTime = 0;
-
 function gameLoop(timestamp: number) {
   if (lastTime !== 0) {
     const deltaTime = timestamp - lastTime;
     const increment = (growthRate * deltaTime) / 1000;
-
     if (increment > 0) {
       counter += increment;
     }
-    // Update the UI on every frame to keep the counter and button states fresh.
     updateUI();
   }
   lastTime = timestamp;
@@ -147,7 +187,6 @@ document.body.appendChild(counterDisplay);
 document.body.appendChild(statusContainer);
 document.body.appendChild(upgradesContainer);
 
-// Set the initial UI state and start the game
 recalculateGrowthRate();
 updateUI();
 requestAnimationFrame(gameLoop);
