@@ -103,7 +103,7 @@ const getUpgradeCost = (upgrade: PlayerUpgrade): number => {
   return upgrade.baseCost * Math.pow(1.15, upgrade.count);
 };
 
-// Logic now loops over the dynamic 'playerUpgrades' array
+// Updates the total growth rate based on owned upgrades
 const recalculateGrowthRate = () => {
   growthRate = playerUpgrades.reduce(
     (total, u) => total + u.count * u.growth,
@@ -111,7 +111,7 @@ const recalculateGrowthRate = () => {
   );
 };
 
-// Logic now loops over the dynamic 'playerUpgrades' array
+// Updates the UI based on current Game State and Player's owned upgrades.
 const updateUI = () => {
   popCounterDisplay.textContent = `${Math.floor(popCounter)} Pops`;
   growthRateDisplay.textContent = `Growth: ${growthRate.toFixed(1)} Pops/sec`;
