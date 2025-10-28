@@ -61,7 +61,7 @@ const playerUpgrades = availableItems.map((item) => ({
 type PlayerUpgrade = typeof playerUpgrades[0];
 
 // --- State Variables ---
-let counter: number = 0;
+let popCounter: number = 0;
 let growthRate: number = 0;
 
 // --- UI Elements ---
@@ -78,8 +78,8 @@ buttonImage.style.height = "auto";
 buttonImage.classList.add("icon");
 imageButton.appendChild(buttonImage);
 
-const counterDisplay = document.createElement("div");
-counterDisplay.id = "counter-display";
+const popCounterDisplay = document.createElement("div");
+popCounterDisplay.id = "popCounter-display";
 const statusContainer = document.createElement("div");
 statusContainer.id = "status-container";
 const growthRateDisplay = document.createElement("div");
@@ -113,7 +113,7 @@ const recalculateGrowthRate = () => {
 
 // Logic now loops over the dynamic 'playerUpgrades' array
 const updateUI = () => {
-  counterDisplay.textContent = `${Math.floor(counter)} Pops`;
+  popCounterDisplay.textContent = `${Math.floor(popCounter)} Pops`;
   growthRateDisplay.textContent = `Growth: ${growthRate.toFixed(1)} Pops/sec`;
 
   upgradesCountDisplay.innerHTML = playerUpgrades
@@ -126,7 +126,7 @@ const updateUI = () => {
       upgrade.element.textContent = `${upgrade.name} (Cost: ${
         Math.ceil(currentCost)
       }, +${upgrade.growth}/s)`;
-      upgrade.element.disabled = counter < currentCost;
+      upgrade.element.disabled = popCounter < currentCost;
     }
   });
 };
@@ -150,8 +150,8 @@ playerUpgrades.forEach((upgrade) => {
 
   button.onclick = () => {
     const cost = getUpgradeCost(upgrade);
-    if (counter >= cost) {
-      counter -= cost;
+    if (popCounter >= cost) {
+      popCounter -= cost;
       upgrade.count++;
       recalculateGrowthRate();
       updateUI();
@@ -162,7 +162,7 @@ playerUpgrades.forEach((upgrade) => {
 });
 
 imageButton.addEventListener("click", () => {
-  counter++;
+  popCounter++;
   updateUI();
 });
 
@@ -173,7 +173,7 @@ function gameLoop(timestamp: number) {
     const deltaTime = timestamp - lastTime;
     const increment = (growthRate * deltaTime) / 1000;
     if (increment > 0) {
-      counter += increment;
+      popCounter += increment;
     }
     updateUI();
   }
@@ -183,7 +183,7 @@ function gameLoop(timestamp: number) {
 
 // --- Initialization ---
 document.body.appendChild(imageButton);
-document.body.appendChild(counterDisplay);
+document.body.appendChild(popCounterDisplay);
 document.body.appendChild(statusContainer);
 document.body.appendChild(upgradesContainer);
 
