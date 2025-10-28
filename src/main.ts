@@ -10,6 +10,43 @@ interface Item {
   description: string;
 }
 
+// -- UI State --
+let popCounter: number = 0;
+let growthRate: number = 0;
+
+// --- UI Elements ---
+document.body.innerHTML = ``;
+const imageButton = document.createElement("button");
+imageButton.style.border = "none";
+imageButton.style.padding = "0";
+imageButton.style.background = "transparent";
+imageButton.style.cursor = "pointer";
+const buttonImage = document.createElement("img");
+buttonImage.src = buttonIcon;
+buttonImage.style.width = "600px";
+buttonImage.style.height = "auto";
+buttonImage.classList.add("icon");
+imageButton.appendChild(buttonImage);
+
+const popCounterDisplay = document.createElement("div");
+popCounterDisplay.id = "popCounter-display";
+const statusContainer = document.createElement("div");
+statusContainer.id = "status-container";
+const growthRateDisplay = document.createElement("div");
+growthRateDisplay.id = "growth-rate-display";
+const upgradesCountDisplay = document.createElement("div");
+upgradesCountDisplay.id = "upgrades-count-display";
+statusContainer.appendChild(growthRateDisplay);
+statusContainer.appendChild(upgradesCountDisplay);
+
+const upgradesContainer = document.createElement("div");
+upgradesContainer.id = "upgrades-container";
+
+// --- Create the new Tooltip Element ---
+const tooltip = document.createElement("div");
+tooltip.id = "tooltip";
+document.body.appendChild(tooltip); // Add it to the page once
+
 // This array holds the static, unchanging definitions of all available items.
 const availableItems: Item[] = [
   {
@@ -59,43 +96,6 @@ const playerUpgrades = availableItems.map((item) => ({
 
 // --- Type alias for clarity ---
 type PlayerUpgrade = typeof playerUpgrades[0];
-
-// --- State Variables ---
-let popCounter: number = 0;
-let growthRate: number = 0;
-
-// --- UI Elements ---
-document.body.innerHTML = ``;
-const imageButton = document.createElement("button");
-imageButton.style.border = "none";
-imageButton.style.padding = "0";
-imageButton.style.background = "transparent";
-imageButton.style.cursor = "pointer";
-const buttonImage = document.createElement("img");
-buttonImage.src = buttonIcon;
-buttonImage.style.width = "600px";
-buttonImage.style.height = "auto";
-buttonImage.classList.add("icon");
-imageButton.appendChild(buttonImage);
-
-const popCounterDisplay = document.createElement("div");
-popCounterDisplay.id = "popCounter-display";
-const statusContainer = document.createElement("div");
-statusContainer.id = "status-container";
-const growthRateDisplay = document.createElement("div");
-growthRateDisplay.id = "growth-rate-display";
-const upgradesCountDisplay = document.createElement("div");
-upgradesCountDisplay.id = "upgrades-count-display";
-statusContainer.appendChild(growthRateDisplay);
-statusContainer.appendChild(upgradesCountDisplay);
-
-const upgradesContainer = document.createElement("div");
-upgradesContainer.id = "upgrades-container";
-
-// --- Create the new Tooltip Element ---
-const tooltip = document.createElement("div");
-tooltip.id = "tooltip";
-document.body.appendChild(tooltip); // Add it to the page once
 
 // --- Game Logic and UI Functions ---
 
