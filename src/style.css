@@ -1,3 +1,35 @@
+/*
+  Centering styles inspired by Toad Soup's CD Clicker!
+  This uses flexbox to center all game elements.
+*/
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Aligns content to the top */
+  text-align: center; /* Centers text inside divs */
+  min-height: 90vh; /* Ensures body takes up height */
+  gap: 10px; /* Adds a little space between elements */
+}
+
+#upgrades-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Adds space between upgrade buttons */
+  width: 100%;
+  max-width: 400px; /* Stops buttons from getting too wide */
+}
+
+#upgrades-container button {
+  width: 100%; /* Makes all buttons a consistent width */
+}
+
+#status-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
 .icon {
   width: 64px;
   vertical-align: top;

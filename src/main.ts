@@ -114,7 +114,7 @@ const recalculateGrowthRate = () => {
 // Updates the UI based on current Game State and Player's owned upgrades.
 const updateUI = () => {
   popCounterDisplay.textContent = `${Math.floor(popCounter)} Pops`;
-  growthRateDisplay.textContent = `Growth: ${growthRate.toFixed(1)} Pops/sec`;
+  growthRateDisplay.textContent = `Pop Rate: ${growthRate.toFixed(1)} Pops/sec`;
 
   upgradesCountDisplay.innerHTML = playerUpgrades
     .map((u) => `<div>${u.name}: ${u.count}</div>`)

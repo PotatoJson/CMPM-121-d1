@@ -2,7 +2,7 @@
 
 A simple yet satisfying incremental clicker game built with TypeScript. The goal is to pop as much virtual bubble wrap as possible!
 
-# How to Play
+## How to Play
 
 The gameplay is straightforward:
 
@@ -16,7 +16,7 @@ The gameplay is straightforward:
 
 Hover your mouse over any upgrade button to see a description of what it does.
 
-# Features
+## Features
 
 This project demonstrates several key web development concepts:
 
@@ -29,3 +29,7 @@ This project demonstrates several key web development concepts:
 **Event-Driven Updates:** All UI elements update instantly in response to player actions.
 
 **Exponential Scaling:** Upgrade costs increase by 15% with each purchase to provide a balanced sense of progression.
+
+## Credit
+
+Toad Soup's CD Clicker for the Idea of centering my clicker game and organization of the buttons
