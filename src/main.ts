@@ -1,6 +1,8 @@
 import buttonIcon from "./bubblewrap.png";
 import "./style.css";
 
+import popSoundFile from "./bubble-pop.mp3";
+
 // --- Data-Driven Design: Static Item Definitions ---
 // This interface defines the "blueprint" for any purchasable item.
 interface Item {
@@ -13,6 +15,9 @@ interface Item {
 // -- UI State --
 let popCounter: number = 0;
 let growthRate: number = 0;
+
+const popSound = new Audio(popSoundFile);
+popSound.volume = 0.5;
 
 // --- UI Elements ---
 document.body.innerHTML = ``;
@@ -163,6 +168,12 @@ playerUpgrades.forEach((upgrade) => {
 
 imageButton.addEventListener("click", () => {
   popCounter++;
+
+  // Play the pop sound, resetting it so it can be spammed
+  // Logic inspired by melissa21-r's project
+  popSound.currentTime = 0;
+  popSound.play();
+
   updateUI();
 });
 

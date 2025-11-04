@@ -31,9 +31,22 @@ body {
 }
 
 .icon {
-  width: 64px;
+  width: 600px;
+  height: auto;
   vertical-align: top;
-  border: 1px solid salmon;
+
+  /* Add a smooth transition for scaling effects */
+  transition: transform 0.1s ease-in-out;
+}
+
+/* This makes it "marginally larger" on hover */
+.icon:hover {
+  transform: scale(1.02);
+}
+
+/* This provides the "click reaction" feedback */
+.icon:active {
+  transform: scale(0.98);
 }
 
 #tooltip {
