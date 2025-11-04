@@ -32,6 +32,6 @@ This project demonstrates several key web development concepts:
 
 ## Credit
 
-Toad Soup's CD Clicker for the Idea of centering my clicker game and organization of the buttons
+Toad Soup's CD Clicker (https://github.com/Toad-Soup/cmpm121-d1/tree/main) for the Idea of centering my clicker game and organization of the buttons
 
-Melissa21-r's Coffee Clicker for the Idead of adding SFX and reaction/feedback to clicking
+Melissa21-R's Coffee Clicker (https://github.com/Melissa21-R/D1-Increment) for the Idea of adding SFX and reaction/feedback to clicking
